@@ -126,6 +126,24 @@ public class Sorting {
 		list.set(i, list.get(j));
 		list.set(j, temp);
     }
+    public static <T extends Comparable<? super T>> int mergesort(List<T> list) {
+       comparisonsMergesort = 0;
+       if (list.siize() <= 1) return comparisonsMergesort;
+       mergesortHelper(list, 0, list.size()-1);
+       return comparisonsMergesort;
+    }
+    private static <T extends Comparable<? super T>> void mergesortHelper(List<T> list, int start, int end) {
+        if (start >= end) return;
+        int mid = start + (end-start) / 2;
+
+        mergesortHelper(list, start, mid);
+        mergesortHelper(list, mid + 1, end);
+
+        merge(list, start, mid, end);
+    }
+    private static <T extends Comparable<? super T>> void merge(List<T> list, int start, int mid, int end) {
+    
+    }
     /**
      * The main method. Creates a list with 20,000 random numbers and then
      * sorts copies of the list with quicksort and heapsort. Then, it verifies if the 
