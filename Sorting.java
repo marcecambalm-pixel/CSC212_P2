@@ -142,7 +142,24 @@ public class Sorting {
         merge(list, start, mid, end);
     }
     private static <T extends Comparable<? super T>> void merge(List<T> list, int start, int mid, int end) {
-    
+        List<T> temp = new ArrayList<>(end - start + 1);
+
+    int left = start;
+    int right = mid + 1;
+
+    while (left <= mid && right <= end) {
+        comparisonsMergesort++; 
+
+        if (list.get(left).compareTo(list.get(right)) <= 0) {
+            temp.add(list.get(left));
+            left++;
+        } else {
+            temp.add(list.get(right));
+            right++;
+        }
+    }
+
+
     }
     /**
      * The main method. Creates a list with 20,000 random numbers and then
