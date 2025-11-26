@@ -9,6 +9,8 @@ public class Sorting {
     // field variables
     private static int comparisonsQuicksort = 0;
     private static int comparisonsHeapsort = 0;
+    private static int comparisonsMergesort = 0;
+    private static int comparisonsTreesort = 0;
 
     /**
      * This method sorts elements using the quicksort algorithm. It uses
@@ -128,7 +130,7 @@ public class Sorting {
     }
     public static <T extends Comparable<? super T>> int mergesort(List<T> list) {
        comparisonsMergesort = 0;
-       if (list.siize() <= 1) return comparisonsMergesort;
+       if (list.size() <= 1) return comparisonsMergesort;
        mergesortHelper(list, 0, list.size()-1);
        return comparisonsMergesort;
     }
@@ -144,23 +146,77 @@ public class Sorting {
     private static <T extends Comparable<? super T>> void merge(List<T> list, int start, int mid, int end) {
         List<T> temp = new ArrayList<>(end - start + 1);
 
-    int left = start;
-    int right = mid + 1;
+        int left = start;
+        int right = mid + 1;
 
-    while (left <= mid && right <= end) {
-        comparisonsMergesort++; 
+        while (left <= mid && right <= end) {
+            comparisonsMergesort++; 
 
-        if (list.get(left).compareTo(list.get(right)) <= 0) {
-            temp.add(list.get(left));
-            left++;
-        } else {
-            temp.add(list.get(right));
-            right++;
+            if (list.get(left).compareTo(list.get(right)) <= 0) {
+                temp.add(list.get(left));
+                left++;
+            } else {
+                temp.add(list.get(right));
+                right++;
+            }
+        }
+    }
+    public static <T extends Comparable<? super T>> int treesort(List<T> list) {
+        comparisonsTreesort = 0;
+        TreeNode<T> root = null;
+
+        for (T value : list) {
+            root = add(value, root);
+        }
+        list.clear(); // empty original list first
+        traversal(root, list); // add the actual sorted list
+
+        return comparisonsTreesort;
+    }
+    private static class TreeNode<T extends Comparable<? super T>> {
+        T element;
+        TreeNode<T> left;
+        TreeNode<T> right;
+        TreeNode(T e) {
+            element = e;
+            left = null;
+            right = null;
+        }
+        private T getElement() {return element;} 
+        private TreeNode<T> getLeft() {return left;} 
+        private TreeNode<T> getRight() {return right;}
+        private void setLeft(TreeNode<T> leftChild) {left = leftChild;} 
+        private void setRight(TreeNode<T> rightChild) {right = rightChild;}
+    }
+    private static <T extends Comparable<? super T>> TreeNode<T> add(T value, TreeNode<T> node) {
+        if (node == null) {
+            TreeNode<T> newNode = new TreeNode<>(value);
+            return newNode;
+        }
+        comparisonsTreesort ++;
+        if (value.compareTo(node.getElement()) < 0) {
+            TreeNode<T> leftChild = add(value, node.getLeft());
+            node.setLeft(leftChild);
+        } 
+        else {
+            comparisonsTreesort ++;
+            if (value.compareTo(node.getElement()) > 0) {
+            TreeNode<T> rightChild = add(value, node.getRight());
+            node.setRight(rightChild);
+            }
+        } 
+        return node;
+    }
+    private static <T extends Comparable<? super T>> void traversal(TreeNode<T> node, List<T> list) {
+        if (node == null) return;
+        else {
+            traversal(node.getLeft(), list);
+            list.add(node.getElement());
+            traversal(node.getRight(), list);
         }
     }
 
 
-    }
     /**
      * The main method. Creates a list with 20,000 random numbers and then
      * sorts copies of the list with quicksort and heapsort. Then, it verifies if the 
@@ -177,6 +233,8 @@ public class Sorting {
         }
         List<Integer> listA = new ArrayList<>(unsorted);
         List<Integer> listB = new ArrayList<>(unsorted);
+        List<Integer> listC = new ArrayList<>(unsorted);
+
         System.out.println("Elements compared with Quicksort: " + quicksort(listA));
         for (int i = 0; i < listA.size()-1; i++ ) {
             if (listA.get(i) > listA.get(i+1)) {
@@ -202,5 +260,18 @@ public class Sorting {
         System.out.println("The heapsorted list is sorted");
         }
         else {System.out.println("The heapsorted list is NOT sorted");}
+        
+        // Sorting with Tree sort
+        System.out.println("Elements compared with Tree sort: " + treesort(listC));
+        for (int i = 0; i < listA.size()-1; i++ ) {
+            if (listC.get(i) > listC.get(i+1)) {
+                sorted = false;
+                break;
+            } 
+        }
+        if (sorted == true) {
+        System.out.println("The treesorted list is sorted");
+        }
+        else {System.out.println("The treesorted list is NOT sorted");}
     }
 }
