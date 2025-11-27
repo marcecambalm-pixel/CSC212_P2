@@ -128,30 +128,58 @@ public class Sorting {
 		list.set(i, list.get(j));
 		list.set(j, temp);
     }
+    /**
+     * The mergesort algorithm. It takes in a list, sorts it and then returns
+     * the number of element comparisons made. 
+     * 
+     * @param <T> type of element we want to sort
+     * @param list list we want to sort
+     * @return
+     */
     public static <T extends Comparable<? super T>> int mergesort(List<T> list) {
        comparisonsMergesort = 0;
-       if (list.size() <= 1) return comparisonsMergesort;
+       
+       if (list.size() < 2) return comparisonsMergesort; // recursively calling until sorted
        mergesortHelper(list, 0, list.size()-1);
        return comparisonsMergesort;
     }
+    /**
+     * Helper method for mergesort. It splits the list in left and right halves.
+     * 
+     * @param <T> type of element we want to sort
+     * @param list list we want to sort
+     * @param start first index 
+     * @param end last index 
+     */
     private static <T extends Comparable<? super T>> void mergesortHelper(List<T> list, int start, int end) {
         if (start >= end) return;
         int mid = start + (end-start) / 2;
 
-        mergesortHelper(list, start, mid);
-        mergesortHelper(list, mid + 1, end);
+        mergesortHelper(list, start, mid); // left
+        mergesortHelper(list, mid + 1, end); // right 
 
         merge(list, start, mid, end);
     }
+    /**
+     * Another helper method for mergesort. It creates a temporary array and then
+     * compares the elements from the left and right halves and then merges them
+     * into the original list.
+     * 
+     * @param <T> type of element we want to sort
+     * @param list the list we want to sort
+     * @param start first index
+     * @param mid middle index
+     * @param end last index
+     */
     private static <T extends Comparable<? super T>> void merge(List<T> list, int start, int mid, int end) {
         List<T> temp = new ArrayList<>(end - start + 1);
-
         int left = start;
         int right = mid + 1;
 
         while (left <= mid && right <= end) {
             comparisonsMergesort++; 
-
+    
+            // finding the lowest of both halves and incrementing the counter to move to the next index to look at.
             if (list.get(left).compareTo(list.get(right)) <= 0) {
                 temp.add(list.get(left));
                 left++;
@@ -160,7 +188,29 @@ public class Sorting {
                 right++;
             }
         }
+        // add remaining elements from left and right halves
+        while (left <= mid) {
+            temp.add(list.get(left));
+            left++;
+        }
+        while (right <= end) {
+            temp.add(list.get(right));
+            right++;
+        }
+        // merging the elements from temp in the original list
+        for (int i = 0; i < temp.size(); i++) {
+            list.set(start + i, temp.get(i));
+        }
     }
+    /**
+     * The treesort method uses the tree sort algorithm to sort elements
+     * from a list. It also returns the number of comparisons between 
+     * elements done. I used most of the code from P1 binary search tree. 
+     * 
+     * @param <T> type of element we want to sort
+     * @param list list we want to sort
+     * @return the number of comparisons between elements
+     */
     public static <T extends Comparable<? super T>> int treesort(List<T> list) {
         comparisonsTreesort = 0;
         TreeNode<T> root = null;
@@ -173,6 +223,9 @@ public class Sorting {
 
         return comparisonsTreesort;
     }
+    /**
+     * Private nested class TreeNode with getters and setters.
+     */
     private static class TreeNode<T extends Comparable<? super T>> {
         T element;
         TreeNode<T> left;
@@ -188,6 +241,16 @@ public class Sorting {
         private void setLeft(TreeNode<T> leftChild) {left = leftChild;} 
         private void setRight(TreeNode<T> rightChild) {right = rightChild;}
     }
+    /**
+     * The add method that basically creates the binary tree structure
+     * using recursion. It also adds the comparisons between elements. 
+     * It is mostly an adaptation of the addHelper() method from P1 code. 
+     * 
+     * @param <T> type of element we want to compare
+     * @param value element we want to sort
+     * @param node the current root where we want to insert the element
+     * @return the new root so pointers can be updated
+     */
     private static <T extends Comparable<? super T>> TreeNode<T> add(T value, TreeNode<T> node) {
         if (node == null) {
             TreeNode<T> newNode = new TreeNode<>(value);
@@ -207,6 +270,15 @@ public class Sorting {
         } 
         return node;
     }
+    /**
+     * The traversal method takes a node and the list as parameters and adds each element
+     * of the tree in order to the list we cleared earlier. 
+     * 
+     * Precondition: the list we are taking as parameter has been cleared.
+     * 
+     * @param node the current root
+     * @param list the empty list we are sorting
+     */
     private static <T extends Comparable<? super T>> void traversal(TreeNode<T> node, List<T> list) {
         if (node == null) return;
         else {
@@ -215,7 +287,6 @@ public class Sorting {
             traversal(node.getRight(), list);
         }
     }
-
 
     /**
      * The main method. Creates a list with 20,000 random numbers and then
@@ -234,6 +305,8 @@ public class Sorting {
         List<Integer> listA = new ArrayList<>(unsorted);
         List<Integer> listB = new ArrayList<>(unsorted);
         List<Integer> listC = new ArrayList<>(unsorted);
+        List<Integer> listD = new ArrayList<>(unsorted);
+
 
         System.out.println("Elements compared with Quicksort: " + quicksort(listA));
         for (int i = 0; i < listA.size()-1; i++ ) {
@@ -261,10 +334,23 @@ public class Sorting {
         }
         else {System.out.println("The heapsorted list is NOT sorted");}
         
-        // Sorting with Tree sort
-        System.out.println("Elements compared with Tree sort: " + treesort(listC));
-        for (int i = 0; i < listA.size()-1; i++ ) {
+        // Sorting with Merge sort
+        System.out.println("Elements compared with Tree sort: " + mergesort(listC));
+        for (int i = 0; i < listC.size()-1; i++ ) {
             if (listC.get(i) > listC.get(i+1)) {
+                sorted = false;
+                break;
+            } 
+        }
+        if (sorted == true) {
+        System.out.println("The mergesorted list is sorted");
+        }
+        else {System.out.println("The mergesorted list is NOT sorted");}
+        
+        // Sorting with Tree sort
+        System.out.println("Elements compared with Tree sort: " + treesort(listD));
+        for (int i = 0; i < listD.size()-1; i++ ) {
+            if (listD.get(i) > listD.get(i+1)) {
                 sorted = false;
                 break;
             } 
