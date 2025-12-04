@@ -11,6 +11,7 @@ public class Sorting {
     private static int comparisonsHeapsort = 0;
     private static int comparisonsMergesort = 0;
     private static int comparisonsTreesort = 0;
+    private static int comparisonsInsertionsort = 0;
 
     /**
      * This method sorts elements using the quicksort algorithm. It uses
@@ -287,6 +288,37 @@ public class Sorting {
             traversal(node.getRight(), list);
         }
     }
+    /**
+     * The insertion sort method. It takes in a list and sorts it
+     * by having a key and comparing elements to its left. While those 
+     * elements are larger than the key it shifts them to the right. This
+     * happens until it finds where the key is supposed to go. 
+     * It does that until the list is sorted fully. 
+     * 
+     * @param <T> the element type we want to sort
+     * @param list the list we want to sort
+     * @return the number of comparisons between elements made
+     */
+    public static <T extends Comparable<? super T>> int insertionsort(List<T> list) {
+        comparisonsInsertionsort = 0;
+        for (int i = 1; i < list.size(); i++) {
+            T key = list.get(i);
+            int previous = i-1;
+            while (previous >= 0) {
+                comparisonsInsertionsort++;
+                // if the previous is larger than the key we switch them
+                if (list.get(previous).compareTo(key) > 0) {
+                    list.set(previous + 1, list.get(previous));
+                    previous--;
+                } else {
+                    break;
+                }
+            }
+            // it means the key goes here
+            list.set(previous + 1, key);
+        }
+        return comparisonsInsertionsort;
+    }
 
     /**
      * The main method. Creates a list with 20,000 random numbers and then
@@ -306,6 +338,7 @@ public class Sorting {
         List<Integer> listB = new ArrayList<>(unsorted);
         List<Integer> listC = new ArrayList<>(unsorted);
         List<Integer> listD = new ArrayList<>(unsorted);
+        List<Integer> listE = new ArrayList<>(unsorted);
 
 
         System.out.println("Elements compared with Quicksort: " + quicksort(listA));
@@ -359,5 +392,18 @@ public class Sorting {
         System.out.println("The treesorted list is sorted");
         }
         else {System.out.println("The treesorted list is NOT sorted");}
+    
+        // Sorting with Insertion sort
+        System.out.println("Elements compared with Insertion sort: " + insertionsort(listE));
+        for (int i = 0; i < listE.size()-1; i++ ) {
+            if (listE.get(i) > listE.get(i+1)) {
+                sorted = false;
+                break;
+            } 
+        }
+        if (sorted == true) {
+        System.out.println("The insertionsorted list is sorted");
+        }
+        else {System.out.println("The insertionsorted list is NOT sorted");}
     }
 }
